@@ -73,11 +73,12 @@ public class CommentManager {
 	//retrieve all comments for user
 	public List<Comment> readAllCommentsForUsername(String username) {
 		List<Comment>	comments = new ArrayList<Comment>();
-		String sql = "select * from comment, user where comment.userId=username";
+		String sql = "select * from comment where comment.userId=?";
 		
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt.setString(1, username);
 			ResultSet results = stmt.executeQuery();
 			while (results.next()) {
 				Comment comment = new Comment();
@@ -98,13 +99,14 @@ public class CommentManager {
 	}
 	
 	//retrieve all comments for movie
-	public List<Comment> readAllCommentsForMovie(String movieId) {
+	public List<Comment> readAllCommentsForMovie(int movieId) {
 		List<Comment>	comments = new ArrayList<Comment>();
-		String sql = "select * from comment, movie where comment.movieId=movieId";
+		String sql = "select * from comment where comment.movieId=?";
 		
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, movieId);
 			ResultSet results = stmt.executeQuery();
 			while (results.next()) {
 				Comment comment = new Comment();
@@ -153,7 +155,7 @@ public class CommentManager {
 	}
 	
 	
-	//update a comment by id
+	//update a comment (just the comment, not the date or userId etc) by id
 	
 	public void updateComment(String commentId, String newComment) {
 

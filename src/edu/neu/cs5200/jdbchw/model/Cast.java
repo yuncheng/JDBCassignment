@@ -2,7 +2,7 @@ package edu.neu.cs5200.jdbchw.model;
 
 public class Cast {
 	
-	private String castId;
+	private int id;
 	private String characterName;
 	private int movieId;
 	private int actorId;
@@ -11,20 +11,20 @@ public class Cast {
 		super();
 	}
 
-	public Cast(String castId, String characterName, int movieId, int actorId) {
+	public Cast(int id, String characterName, int movieId, int actorId) {
 		super();
-		this.castId = castId;
+		this.id = id;
 		this.characterName = characterName;
 		this.movieId = movieId;
 		this.actorId = actorId;
 	}
 
-	public String getCastId() {
-		return castId;
+	public int getId() {
+		return id;
 	}
 
-	public void setCastId(String castId) {
-		this.castId = castId;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCharacterName() {

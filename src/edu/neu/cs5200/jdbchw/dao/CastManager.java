@@ -34,8 +34,9 @@ public class CastManager {
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, newComment.getComment());
-			statement.setDate(2, newComment.getDate());
+			statement.setString(1, newCast.getCharacterName());
+			statement.setInt(2, newCast.getActorId());
+			statement.setInt(3, newCast.getMovieId());
 			statement.executeUpdate();
 			
 		} catch (SQLException e) {
@@ -45,9 +46,9 @@ public class CastManager {
 	}
 	
 	
-	//retrieve all comments
-	public List<Cast> readAllComments() {
-		List<Cast>	comments = new ArrayList<Cast>();
+	//retrieve all casts
+	public List<Cast> readAllCast() {
+		List<Cast>	casts = new ArrayList<Cast>();
 		String sql = "select * from cast";
 		
 		try {
@@ -57,9 +58,10 @@ public class CastManager {
 			while (results.next()) {
 				Cast cast = new Cast();
 				cast.setId(results.getInt("id"));
-				cast.setComment(results.getString("cast"));
-				cast.setDate(results.getDate("date"));
-				comments.add(cast);
+				cast.setCharacterName(results.getString("characterName"));
+				cast.setMovieId(results.getInt("movieId"));
+				cast.setActorId(results.getInt("actorId"));
+				casts.add(cast);
 			}
 			
 		} catch (SQLException e) {
@@ -67,26 +69,56 @@ public class CastManager {
 			e.printStackTrace();
 		}
 		
-		return comments;
+		return casts;
 	}
 	
-	//retrieve all comments for user
-	public List<Cast> readAllCommentsForUsername(String username) {
-		List<Cast>	comments = new ArrayList<Cast>();
-		String sql = "select * from cast, user where cast.userId=username";
+	//retrieve all casts for actor
+	public List<Cast> readAllCastForActor(int actorId) {
+		List<Cast>	casts = new ArrayList<Cast>();
+		String sql = "select * from cast where cast.actorId=?";
+		
+		try {
+			
+			Connection connection = ds.getConnection();
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, actorId);
+			ResultSet results = stmt.executeQuery();
+		
+			while (results.next()) {
+				Cast cast = new Cast();
+				cast.setId(results.getInt("id"));
+				cast.setCharacterName(results.getString("characterName"));
+				cast.setMovieId(results.getInt("movieId"));
+				cast.setActorId(results.getInt("actorId"));
+				casts.add(cast);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return casts;
+	}
+	
+	//retrieve all casts for movie
+	public List<Cast> readAllCastForMovie(String movieId) {
+		List<Cast>	casts = new ArrayList<Cast>();
+		String sql = "select * from cast where cast.movieId=?";
 		
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt.setString(1, movieId);
 			ResultSet results = stmt.executeQuery();
+		
 			while (results.next()) {
 				Cast cast = new Cast();
 				cast.setId(results.getInt("id"));
-				cast.setComment(results.getString("cast"));
-				cast.setDate(results.getDate("date"));
-				cast.setUserId(results.getString("userId"));
+				cast.setCharacterName(results.getString("characterName"));
 				cast.setMovieId(results.getInt("movieId"));
-				comments.add(cast);
+				cast.setActorId(results.getInt("actorId"));
+				casts.add(cast);
 			}
 			
 		} catch (SQLException e) {
@@ -94,53 +126,25 @@ public class CastManager {
 			e.printStackTrace();
 		}
 		
-		return comments;
-	}
-	
-	//retrieve all comments for movie
-	public List<Cast> readAllCommentsForMovie(String movieId) {
-		List<Cast>	comments = new ArrayList<Cast>();
-		String sql = "select * from cast, movie where cast.movieId=movieId";
-		
-		try {
-			Connection connection = ds.getConnection();
-			PreparedStatement stmt = connection.prepareStatement(sql);
-			ResultSet results = stmt.executeQuery();
-			while (results.next()) {
-				Cast cast = new Cast();
-				cast.setId(results.getInt("id"));
-				cast.setComment(results.getString("cast"));
-				cast.setDate(results.getDate("date"));
-				cast.setUserId(results.getString("userId"));
-				cast.setMovieId(results.getInt("movieId"));
-				comments.add(cast);
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return comments;
+		return casts;
 	}
 	
 	
 	//retrieve a cast by id - method signature changed to match id type
-	public Cast readCommentForId(int commentId) {
+	public Cast readCastForId(int castId) {
 		Cast cast = new Cast();
 		String sql = "select * from cast where id=?";
 		
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setInt(1, commentId);
+			statement.setInt(1, castId);
 			ResultSet result = statement.executeQuery();
 			if (result.next()) {
 				cast.setId(result.getInt("id"));
-				cast.setComment(result.getString("cast"));
-				cast.setDate(result.getDate("date"));
-				cast.setUserId(result.getString("userId"));
+				cast.setCharacterName(result.getString("characterName"));
 				cast.setMovieId(result.getInt("movieId"));
+				cast.setActorId(result.getInt("actorId"));
 			}
 		
 		} catch (SQLException e) {
@@ -155,14 +159,16 @@ public class CastManager {
 	
 	//update a cast by id
 	
-	public void updateComment(String commentId, String newComment) {
+	public void updateCast(int castId, Cast newCast) {
 
-		String sql = "update cast set cast=? where id=?";
+		String sql = "update cast set characterName=?, movieId=?, actorId=? where id=?";
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, newComment);
-			statement.setString(2, commentId);
+			statement.setString(1, newCast.getCharacterName());
+			statement.setInt(2, newCast.getMovieId());
+			statement.setInt(3, newCast.getActorId());
+			statement.setInt(4, newCast.getId());
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -171,12 +177,12 @@ public class CastManager {
 	}
 	
 	//delete a cast by id
-	public void deleteComment(int commentId) {
+	public void deleteCast(int castId) {
 		String sql = "delete from cast where id=?";
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setInt(1, commentId);
+			statement.setInt(1, castId);
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
