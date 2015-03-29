@@ -30,12 +30,14 @@ public class CommentManager {
 	
 	//create comment
 	public void createComment(Comment newComment) {
-		String sql = "insert into comment values (null,?,?)";
+		String sql = "insert into comment values (null,?,?,?,?)";
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, newComment.getComment());
 			statement.setDate(2, newComment.getDate());
+			statement.setString(3, newComment.getUserId());
+			statement.setInt(4, newComment.getMovieId());
 			statement.executeUpdate();
 			
 		} catch (SQLException e) {
@@ -59,6 +61,8 @@ public class CommentManager {
 				comment.setId(results.getInt("id"));
 				comment.setComment(results.getString("comment"));
 				comment.setDate(results.getDate("date"));
+				comment.setUserId(results.getString("userId"));
+				comment.setMovieId(results.getInt("movieId"));
 				comments.add(comment);
 			}
 			
@@ -157,14 +161,14 @@ public class CommentManager {
 	
 	//update a comment (just the comment, not the date or userId etc) by id
 	
-	public void updateComment(String commentId, String newComment) {
+	public void updateComment(int commentId, String newComment) {
 
 		String sql = "update comment set comment=? where id=?";
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, newComment);
-			statement.setString(2, commentId);
+			statement.setInt(2, commentId);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

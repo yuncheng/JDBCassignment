@@ -30,14 +30,13 @@ public class ActorManager {
 	
 	//create actor
 	public void createActor(Actor newActor) {
-		String sql = "insert into actor values (?,?,?,?)";
+		String sql = "insert into actor values (null,?,?,?)";
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setInt(1, newActor.getId());
-			statement.setString(2, newActor.getFirstName());
-			statement.setString(3, newActor.getLastName());
-			statement.setDate(4, newActor.getDateOfBirth());
+			statement.setString(1, newActor.getFirstName());
+			statement.setString(2, newActor.getLastName());
+			statement.setDate(3, newActor.getDateOfBirth());
 			
 			statement.executeUpdate();
 			
@@ -48,7 +47,7 @@ public class ActorManager {
 	}
 	
 	
-	//retrieve all users
+	//retrieve all actors
 	public List<Actor> readAllActors() {
 		List<Actor>	actors = new ArrayList<Actor>();
 		String sql = "select * from actor";
@@ -74,15 +73,15 @@ public class ActorManager {
 		return actors;
 	}
 	
-	//retrieve a actor by id
-	public Actor readActor(String actorId) {
+	//retrieve a actor by id - method signature changed to match id type
+	public Actor readActor(int actorId) {
 		Actor actor = new Actor();
 		String sql = "select * from actor where id=?";
 		
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, actorId);
+			statement.setInt(1, actorId);
 			ResultSet result = statement.executeQuery();
 			if (result.next()) {
 				actor.setId(result.getInt("id"));
@@ -101,9 +100,9 @@ public class ActorManager {
 	}
 	
 	
-	//update a actor by id
+	//update a actor by id - method signature changed to match actorId type
 	
-	public void updateActor(String actorId, Actor actor) {
+	public void updateActor(int actorId, Actor actor) {
 
 		String sql = "update actor set firstName=?, lastName=?, dateOfBirth=? where id=?";
 		try {
@@ -112,7 +111,7 @@ public class ActorManager {
 			statement.setString(1, actor.getFirstName());
 			statement.setString(2, actor.getLastName());
 			statement.setDate(3, actor.getDateOfBirth());
-			statement.setInt(4, actor.getId());
+			statement.setInt(4, actorId);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -121,12 +120,12 @@ public class ActorManager {
 	}
 	
 	//delete a actor by id
-	public void  deleteActor(String actorId) {
+	public void  deleteActor(int actorId) {
 		String sql = "delete from actor where id=?";
 		try {
 			Connection connection = ds.getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, actorId);
+			statement.setInt(1, actorId);
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
